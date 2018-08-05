@@ -1,0 +1,14 @@
+- hosts: all
+  become: True
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+  roles:
+    - prepare
+    - python
+    - mariadb
+    - redis
+    - jumpserver
+    - coco
+    - luna
+    - nginx

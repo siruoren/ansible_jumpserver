@@ -1,0 +1,5 @@
+use mysql;
+delete from user where user='';
+update user set password=password('{{mariadb.PASSWORD}}') where user='root';
+update user set host='%' where user='root';
+flush privileges;

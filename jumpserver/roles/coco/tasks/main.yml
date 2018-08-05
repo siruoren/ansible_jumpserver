@@ -1,0 +1,67 @@
+---
+- name: download coco code
+  git:
+    repo: "{{coco_repo}}"
+    dest: "{{jms.APP_DIR}}/coco"
+    force: yes
+
+- name: install coco rpm requirements
+  shell: |
+    yum -y  install $(cat rpm_requirements.txt)
+  args:
+    chdir: "{{jms.APP_DIR}}/coco/requirements"
+
+- name: install coco python requirements
+  shell: |
+    source /opt/py/bin/activate;
+    pip install -r requirements.txt
+  args:
+    chdir: "{{jms.APP_DIR}}/coco/requirements"
+
+
+- name: create coco config
+  copy:
+    src: "{{jms.APP_DIR}}/coco/conf_example.py"
+    dest: "{{jms.APP_DIR}}/coco/conf.py"
+    remote_src: yes
+
+- name: create radom coco register name
+  local_action: |
+    shell date  +%Y%m%d%H%M%S
+  register: coco_name
+  run_once: yes
+
+- name: config coco register name
+  lineinfile:
+    path: "{{jms.APP_DIR}}/coco/conf.py"
+    regexp: ' # NAME = '
+    line: '    NAME = "{{coco_name.stdout}}"'
+
+- name: config coco ssh port
+  lineinfile:
+    path: "{{jms.APP_DIR}}/coco/conf.py"
+    regexp: 'SSHD_PORT = '
+    line: '    SSHD_PORT = "{{coco.SSHD_PORT}}"'
+
+
+
+- name: config coco CORE_HOST ip
+  lineinfile:
+    path: "{{jms.APP_DIR}}/coco/conf.py"
+    regexp: ' # CORE_HOST = '
+    line: "    CORE_HOST = 'http://127.0.0.1:8080'"
+
+
+- name: config coco sftp config
+  lineinfile:
+    path: "{{jms.APP_DIR}}/coco/coco/sftp.py"
+    regexp: "root = '/tmp'"
+    line: "    root = '/home'"
+
+
+- name: start coco
+  shell: |
+    source /opt/py/bin/activate;
+    ./cocod restart -d
+  args:
+    chdir: "{{jms.APP_DIR}}/coco"

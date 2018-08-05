@@ -1,0 +1,19 @@
+---
+- name: start jumpserver
+  shell: |
+    source /opt/py/bin/activate;
+    ./jms restart all -d
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver"
+
+- name: wait for jumpserver start
+  wait_for:
+    timeout: 10
+
+
+- name: start coco
+  shell: |
+    source /opt/py/bin/activate;
+    ./cocod restart -d
+  args:
+    chdir: "{{jms.APP_DIR}}/coco"

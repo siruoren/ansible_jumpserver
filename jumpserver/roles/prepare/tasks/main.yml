@@ -1,0 +1,65 @@
+---
+- name: add group jumpserver
+  group:
+    name: jumpserver
+    gid: 9999
+    state: present
+
+- name: add user jumpserver
+  user:
+    name: jumpserver
+    uid: 9999
+    group: jumpserver
+    state: present
+
+- name: create opt directory
+  file:
+    path: "{{jms.APP_DIR}}"
+    owner: jumpserver
+    group: jumpserver
+    state: directory
+    mode: 0755
+
+- name: stop selinux status
+  shell:
+    setenforce 0
+  ignore_errors: yes
+
+- name: disable selinux
+  selinux:
+    state: disabled
+
+- name: update selinux config
+  copy:
+    src: disabled_selinux_config
+    dest: /etc/selinux/config
+
+- name: disable firewalld
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+  ignore_errors: True
+
+- name: install basic progrems
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - wget
+    - sqlite-devel
+    - xz
+    - gcc
+    - automake
+    - zlib-devel
+    - openssl-devel
+    - epel-release
+    - git
+
+
+#设置系统的socket连接的处理限制
+- name: tune kernal parameters
+  sysctl:
+    name: net.core.somaxconn
+    value: 2048
+    state: present

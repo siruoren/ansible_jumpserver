@@ -1,0 +1,34 @@
+<<<<<<< HEAD
+*.jar
+*.zip
+*.rpm
+=======
+*~
+.project
+.classpath
+.settings
+.idea
+*.iml
+*.log
+*.versionsBackup
+target
+rebel.xml
+
+*.jar
+*.zip
+*.rpm
+*.war
+/src_files/
+dependency-reduced-pom.xml
+/nb-configuration.xml
+/nbactions.xml
+
+.DS_Store
+bin
+build
+.vs
+.vscode
+.gradle
+.zip
+.jar
+>>>>>>> develop

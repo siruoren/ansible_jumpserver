@@ -1,0 +1,19 @@
+---
+- name: update jumpserver code
+  git:
+    repo: "{{jumpserver_repo}}"
+    dest: "{{jms.APP_DIR}}/jumpserver"
+    force: yes
+
+- name: copy update jumpserver scripts
+  template:
+    src: update_jumpserver.j2
+    dest: "{{jms.APP_DIR}}/jumpserver/utils/update_jumpserver.sh"
+    mode: 0755
+
+- name: start update jumpserver
+  shell: |
+    source /opt/py/bin/activate;
+    sh upgrade_jumpserver.sh
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver/utils"

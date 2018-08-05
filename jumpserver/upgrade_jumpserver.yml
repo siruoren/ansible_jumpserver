@@ -1,0 +1,5 @@
+- hosts: all
+  become: True
+
+  roles:
+    - jumpserver_update

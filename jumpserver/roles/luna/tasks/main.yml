@@ -1,0 +1,14 @@
+---
+- name: get luna
+  get_url:
+    url:  "{{luna_url}}"
+    dest: "{{jms.APP_DIR}}/luna.tar.gz"
+    mode: 0755
+
+- name: unarchive luna tar
+  unarchive:
+    src: "{{jms.APP_DIR}}/luna.tar.gz"
+    dest: "{{jms.APP_DIR}}/"
+    owner: jumpserver
+    group: jumpserver
+    mode: 0755

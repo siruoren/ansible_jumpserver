@@ -1,0 +1,42 @@
+---
+- name: delete all tmp/python 
+  shell: |
+    echo [Pp]ython* |grep Python |xargs -n 1 rm -rf
+  args:
+    chdir: /tmp/
+
+- name: get python
+  get_url:
+    url: "{{python_url}}"
+    dest: /tmp/Python.tar.xz
+    mode: 0755
+
+- name: unzrchive python tar
+  unarchive:
+    src: /tmp/Python.tar.xz
+    dest: /tmp/
+    remote_src: yes
+
+- name: rm /tmp/Python.tar.xz
+  file:
+    path: /tmp/Python.tar.xz
+    state: absent
+
+- name: get Python src directory
+  shell: |
+    echo [Pp]ython* |xargs -n 1
+  register: python_src
+
+
+- name: compile Python
+  shell: |
+    cd {{python_src.stdout}};
+    ./configure && make && make install
+  args:
+    chdir: /tmp/
+
+- name: config python3 env
+  shell:
+    python3 -m venv py
+  args:
+    chdir: /opt/

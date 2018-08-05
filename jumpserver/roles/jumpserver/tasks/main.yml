@@ -1,0 +1,97 @@
+---
+- name: download jumpserver code
+  git:
+    repo: "{{jumpserver_repo}}"
+    dest: "{{jms.APP_DIR}}/jumpserver"
+    force: yes
+
+- name: create jumpserver config files
+  copy:
+    src: "{{jms.APP_DIR}}/jumpserver/config_example.py"
+    dest: "{{jms.APP_DIR}}/jumpserver/config.py"
+
+- name: copy  jumpserver scripts
+  template:
+    src: jumpserver.sql
+    dest: /tmp/jumpserver.sql
+
+- name: create jumpserver database
+  shell: |
+    mysql -u{{mariadb.USER}} -p{{mariadb.PASSWORD}} -h{{mariadb.HOST}} < /tmp/jumpserver.sql
+  ignore_errors: yes
+
+- name: clear default jumpserver config
+  lineinfile:
+    path:  "{{jms.APP_DIR}}/jumpserver/config.py"
+    regexp: "{{item}}"
+    state: absent
+  with_items:
+    - 'DB_ENGINE =(.*)'
+    - 'DB_NAME =(.*)'
+
+
+- name: config jumpserver database config
+  blockinfile:
+    path: "{{jms.APP_DIR}}/jumpserver/config.py"
+    insertafter: "class Config:"
+    block: |
+      # MySQL or postgres setting like:
+          DB_ENGINE ='{{jms.DB_ENGINE}}'
+          DB_HOST = '{{jms.DB_HOST}}'
+          DB_PORT = {{jms.DB_PORT}}
+          DB_USER = '{{jms.DB_USER}}'
+          DB_PASSWORD = '{{jms.DB_PASSWORD}}'
+          DB_NAME = '{{jms.DB_NAME}}'
+
+
+
+- name: install jumpserver rpm  requrements
+  shell: |
+    yum install -y $(cat rpm_requirements.txt)
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver/requirements/"
+
+- name: get python-gssapi version
+  shell: |
+    cat {{jms.APP_DIR}}/jumpserver/requirements/requirements.txt |grep python-gssapi
+  register: python_gssapi
+
+- name: update jumpserver pip requrements
+  lineinfile:
+    path: "{{jms.APP_DIR}}/jumpserver/requirements/requirements.txt"
+    regexp: "python-gssapi(.*)"
+    state: absent
+
+- name: install jumpserver pip requrements
+  shell: |
+    source /opt/py/bin/activate;
+    pip install -r requirements.txt;
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver/requirements/"
+
+- name: install  python-gssapi 
+  shell: |
+    source /opt/py/bin/activate;
+    pip install  {{item}}
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver/requirements/"
+  with_items:
+    - "{{python_gssapi.stdout}}"
+
+
+
+- name: start migrations mariadb
+  shell: |
+     source /opt/py/bin/activate;
+     sh make_migrations.sh
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver/utils"
+
+
+- name: start jumpserver
+  shell: |
+    source /opt/py/bin/activate;
+    ./jms restart all -d
+  args:
+    chdir: "{{jms.APP_DIR}}/jumpserver"
+
