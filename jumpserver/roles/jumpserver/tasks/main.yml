@@ -20,6 +20,14 @@
     mysql -u{{mariadb.USER}} -p{{mariadb.PASSWORD}} -h{{mariadb.HOST}} < /tmp/jumpserver.sql
   ignore_errors: yes
 
+
+- name: config  default jumpserver web port
+  lineinfile:
+    path:  "{{jms.APP_DIR}}/jumpserver-{{jms_version}}/config.py"
+    regexp: "HTTP_LISTEN_PORT(.*)"
+    line: '    HTTP_LISTEN_PORT = {{jms.HTTP_LISTEN_PORT}}'
+
+
 - name: clear default jumpserver config
   lineinfile:
     path:  "{{jms.APP_DIR}}/jumpserver/config.py"
@@ -69,7 +77,7 @@
   args:
     chdir: "{{jms.APP_DIR}}/jumpserver/requirements/"
 
-- name: install  python-gssapi 
+- name: install  python-gssapi
   shell: |
     source /opt/py/bin/activate;
     pip install  {{item}}
@@ -95,3 +103,4 @@
   args:
     chdir: "{{jms.APP_DIR}}/jumpserver"
 
+- include_tasks: diy_web.yml

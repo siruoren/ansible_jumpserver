@@ -2,7 +2,7 @@
 python_url: https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tar.xz
 jumpserver_repo: 'https://github.com/jumpserver/jumpserver.git'
 coco_repo: 'https://github.com/jumpserver/coco.git'
-luna_url: https://github.com/jumpserver/luna/releases/download/1.3.3/luna.tar.gz
+luna_url: https://github.com/jumpserver/luna/archive/1.4.0.tar.gz
 
 mariadb:
   HOST: 127.0.0.1
@@ -12,6 +12,7 @@ mariadb:
 jms:
   APP_DIR: /opt
   HOST: 127.0.0.1
+  HTTP_LISTEN_PORT: 8080
   DB_ENGINE: 'mysql'
   DB_HOST: '127.0.0.1'
   DB_PORT: 3306

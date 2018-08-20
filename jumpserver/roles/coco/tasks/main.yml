@@ -41,7 +41,7 @@
   lineinfile:
     path: "{{jms.APP_DIR}}/coco/conf.py"
     regexp: 'SSHD_PORT = '
-    line: '    SSHD_PORT = "{{coco.SSHD_PORT}}"'
+    line: '    SSHD_PORT = {{coco.SSHD_PORT}}'
 
 
 
@@ -49,7 +49,7 @@
   lineinfile:
     path: "{{jms.APP_DIR}}/coco/conf.py"
     regexp: ' # CORE_HOST = '
-    line: "    CORE_HOST = 'http://127.0.0.1:8080'"
+    line: "    CORE_HOST = 'http://{{jms.HOST}}:{{jms.HTTP_LISTEN_PORT}}'"
 
 
 - name: config coco sftp config
