@@ -4,8 +4,7 @@
 ansible自动化 安装 jumpserver
 
 1. master 分支 为在线安装剧本（基于互联网）
-2. offline 分支 为离线安装剧本（基于本地yum源）
-3. dev 分支 为开发剧本
+
 
 
 #### 软件架构
