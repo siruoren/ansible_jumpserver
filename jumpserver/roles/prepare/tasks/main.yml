@@ -1,22 +1,22 @@
 ---
-- name: add group jumpserver
+- name: add group {{manager_group}}
   group:
-    name: jumpserver
+    name: "{{manager_group}}"
     gid: 9999
     state: present
 
-- name: add user jumpserver
+- name: add user {{manager_user}}
   user:
-    name: jumpserver
+    name: "{{manager_user}}"
     uid: 9999
-    group: jumpserver
+    group: "{{manager_group}}"
     state: present
 
-- name: create opt directory
+- name: create jms APP_DIR directory
   file:
     path: "{{jms.APP_DIR}}"
-    owner: jumpserver
-    group: jumpserver
+    owner: "{{manager_user}}"
+    group: "{{manager_group}}"
     state: directory
     mode: 0755
 

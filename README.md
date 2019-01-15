@@ -7,18 +7,20 @@ ansible自动化 安装 jumpserver
 
 
 
+
 #### 软件架构
 1. 基于官方文档逻辑架构安装
 2. 基于Centos 7 系统安装
 3. Python 版本 3.6.1
 4. jumpserver 版本 基于官方GIT库版本
 5. coco 版本 基于官方GIT库版本
-6. luna 版本 1.4.0
+6. luna 版本 基于官方jumpserver GIT库版本
 
 
 #### 安装教程（基于互联网）
 1. 服务器安装ansible（安装jumpserver必须具备ansible管理条件）
 2. 服务器与客户端配置用户免密
+3. 配置参数详情：jumpserver/inventories/TEST/group_vars/all.yml
 3. cd jumpserver/
 4. ansible-playbook -i inventories/TEST  install_jumpserver.yml
 5. 等待jumpserver安装完成
@@ -37,3 +39,5 @@ ansible自动化 安装 jumpserver
 2. 新建 Feat_xxx 分支
 3. 提交代码
 4. 新建 Pull Request
+
+

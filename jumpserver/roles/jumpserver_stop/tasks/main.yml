@@ -2,13 +2,13 @@
 - name: stop jumpserver
   shell: |
     source /opt/py/bin/activate;
-    ./jms stop all -d
+    set -m;./jms stop all -d
   args:
     chdir: "{{jms.APP_DIR}}/jumpserver"
 
 - name: stop coco
   shell: |
     source /opt/py/bin/activate;
-    ./cocod stop -d
+    set -m;./cocod stop -d
   args:
     chdir: "{{jms.APP_DIR}}/coco"

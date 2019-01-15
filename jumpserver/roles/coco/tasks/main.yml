@@ -1,9 +1,37 @@
 ---
-- name: download coco code
-  git:
-    repo: "{{coco_repo}}"
-    dest: "{{jms.APP_DIR}}/coco"
-    force: yes
+- name: stop coco service
+  shell: |
+    ps -ef |grep cocod|awk '{print $2}'|xargs kill -9
+  ignore_errors: true
+
+- name: rm coco directory
+  file:
+    path: "{{item}}"
+    state: absent
+  with_items: 
+      - "{{jms.APP_DIR}}/coco"
+      - "{{jms.APP_DIR}}/coco-master.zip"
+
+- name: download coco package
+  get_url:
+    url:   "{{coco_repo}}"
+    dest: "{{jms.APP_DIR}}/"
+    mode: 0755
+
+- name: unarchive coco package
+  unarchive:
+    src: "{{jms.APP_DIR}}/coco-master.zip"
+    dest: "{{jms.APP_DIR}}/"
+    remote_src: yes
+    mode: 0755
+
+- name: rename coco directory
+  shell: |
+    mv coco-master  coco
+  args:
+    chdir: "{{jms.APP_DIR}}/"
+
+
 
 - name: install coco rpm requirements
   shell: |
@@ -18,6 +46,16 @@
   args:
     chdir: "{{jms.APP_DIR}}/coco/requirements"
 
+- name: create coco log directory
+  file:
+    path: "{{jms.APP_DIR}}/coco/{{item}}"
+    owner: "{{manager_user}}"
+    group: "{{manager_group}}"
+    state: directory
+    mode: 0755
+  with_items:
+    - keys
+    - logs
 
 - name: create coco config
   copy:
@@ -25,17 +63,22 @@
     dest: "{{jms.APP_DIR}}/coco/conf.py"
     remote_src: yes
 
-- name: create radom coco register name
-  local_action: |
-    shell date  +%Y%m%d%H%M%S
-  register: coco_name
-  run_once: yes
+- name: create  BOOTSTRAP_TOKEN
+  shell:
+    echo {{ansible_machine_id}}
+  register: bootstrap_token 
+  connection: local
+
+- name: create radom coco register id
+  shell: |
+    date  +%H%M%S
+  register: coco_id
 
 - name: config coco register name
   lineinfile:
     path: "{{jms.APP_DIR}}/coco/conf.py"
     regexp: ' # NAME = '
-    line: '    NAME = "{{coco_name.stdout}}"'
+    line: '    NAME = "coco_{{ansible_hostname}}_{{coco_id.stdout}}"'
 
 - name: config coco ssh port
   lineinfile:
@@ -44,6 +87,11 @@
     line: '    SSHD_PORT = {{coco.SSHD_PORT}}'
 
 
+- name: config  BOOTSTRAP_TOKEN
+  lineinfile:
+    path:  "{{jms.APP_DIR}}/coco/conf.py"
+    regexp: "BOOTSTRAP_TOKEN =(.*)"
+    line: "    BOOTSTRAP_TOKEN = '{{bootstrap_token.stdout}}'"
 
 - name: config coco CORE_HOST ip
   lineinfile:
@@ -58,10 +106,39 @@
     regexp: "root = '/tmp'"
     line: "    root = '/home'"
 
+- name: chown coco directory
+  file:
+    path: "{{jms.APP_DIR}}/coco"
+    state: directory
+    owner: "{{manager_user}}"
+    group: "{{manager_group}}"
+    recurse: yes
+    mode: 0755
 
-- name: start coco
+
+- name: wait for jumpserver start
+  wait_for:
+      port: "{{jms.HTTP_LISTEN_PORT}}"
+      timeout: 300
+
+
+- name: start  coco service
   shell: |
     source /opt/py/bin/activate;
-    ./cocod restart -d
+    set -m;./cocod restart -d
   args:
     chdir: "{{jms.APP_DIR}}/coco"
+  become: yes
+  become_user: "{{manager_user}}"
+
+
+- name: copy coco start/stop scripts
+  template:
+    src: "{{item}}"
+    dest: "{{jms.APP_DIR}}/coco/"
+    owner: "{{manager_user}}"
+    group: "{{manager_group}}"
+    mode: 0755
+  with_items:
+    - coco_start.sh
+    - coco_stop.sh

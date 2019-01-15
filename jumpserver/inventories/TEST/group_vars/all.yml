@@ -1,9 +1,13 @@
 ---
-python_url: https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tar.xz
-jumpserver_repo: 'https://github.com/jumpserver/jumpserver.git'
-coco_repo: 'https://github.com/jumpserver/coco.git'
-luna_url: https://github.com/jumpserver/luna/archive/1.4.0.tar.gz
-
+manager_group: jumpserver
+manager_user: jumpserver
+python_url: 'https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tar.xz'
+jumpserver_repo: 'https://codeload.github.com/jumpserver/jumpserver/zip/master'
+coco_repo: 'https://codeload.github.com/jumpserver/coco/zip/master'
+luna_url: 'https://codeload.github.com/jumpserver/luna/zip/master'
+guacamole_repo: 'https://codeload.github.com/jumpserver/docker-guacamole/zip/master'
+guacamole_tomcat_url: 'http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz'
+guacamole_ssh_forward_repo: 'https://github.com/ibuler/ssh-forward.git'
 mariadb:
   HOST: 127.0.0.1
   USER: root
@@ -22,6 +26,10 @@ jms:
 
 coco:
   SSHD_PORT: 2222
+
+guacamole:
+  HOST: 127.0.0.1
+  HTTP_LISTEN_PORT: 8081
 
 nginx:
   NGINX_PORT: 80

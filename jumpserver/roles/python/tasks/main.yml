@@ -6,17 +6,3 @@
 
 - include_tasks: install_python.yml
   when: py.stat.exists == False
-
-
-
-- name: config pip config dir
-  file:
-    path: ~/.pip
-    state: directory
-
-- name: config pip config
-  copy:
-    src: pip.conf
-    dest: ~/.pip/pip.conf
-
-

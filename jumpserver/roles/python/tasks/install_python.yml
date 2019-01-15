@@ -1,5 +1,5 @@
 ---
-- name: delete all tmp/python 
+- name: delete all tmp/python
   shell: |
     echo [Pp]ython* |grep Python |xargs -n 1 rm -rf
   args:
@@ -40,3 +40,10 @@
     python3 -m venv py
   args:
     chdir: /opt/
+
+
+- name: upgrade python  pip
+  shell: |
+    source /opt/py/bin/activate;
+    pip install --upgrade pip setuptools
+

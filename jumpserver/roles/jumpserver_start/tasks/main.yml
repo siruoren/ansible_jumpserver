@@ -2,7 +2,7 @@
 - name: start jumpserver
   shell: |
     source /opt/py/bin/activate;
-    ./jms restart all -d
+    set -m;./jms restart all -d
   args:
     chdir: "{{jms.APP_DIR}}/jumpserver"
 
@@ -14,6 +14,6 @@
 - name: start coco
   shell: |
     source /opt/py/bin/activate;
-    ./cocod restart -d
+    set -m;./cocod restart -d
   args:
     chdir: "{{jms.APP_DIR}}/coco"

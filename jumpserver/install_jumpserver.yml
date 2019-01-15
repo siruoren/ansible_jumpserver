@@ -7,7 +7,9 @@
     - python
     - mariadb
     - redis
+    - backup_jms
     - jumpserver
     - coco
+    - guacamole
     - luna
     - nginx
