@@ -15,11 +15,11 @@ ansible自动化 安装 jumpserver
 4. jumpserver 版本 基于官方GIT库版本
 5. coco 版本 基于官方GIT库版本
 6. luna 版本 基于官方jumpserver GIT库版本
-
+7. guacamole 版本 基于官方jumpserver GIT库版本
 
 #### 安装教程（基于互联网）
 1. 服务器安装ansible（安装jumpserver必须具备ansible管理条件）
-2. 服务器与客户端配置用户免密
+2. 客户端配置root用户 jumpserver/inventories/TEST/hosts
 3. 配置参数详情：jumpserver/inventories/TEST/group_vars/all.yml
 3. cd jumpserver/
 4. ansible-playbook -i inventories/TEST  install_jumpserver.yml
