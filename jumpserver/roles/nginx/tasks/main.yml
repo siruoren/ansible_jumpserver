@@ -1,20 +1,3 @@
 ---
-- name: install nginx
-  yum:
-    name: nginx
-    state: present
-- name: config nginx  default config
-  copy:
-    src: nginx_default.conf
-    dest: /etc/nginx/nginx.conf
-
-- name: config nginx jumpserver config
-  template:
-    src: jumpserver.conf
-    dest: /etc/nginx/conf.d/jumpserver.conf
-
-- name: restart nginx service
-  systemd:
-    name: nginx
-    enabled: yes
-    state: restarted
+- import_tasks: install_nginx.yml
+  when: inventory_hostname in groups['jumpserver']

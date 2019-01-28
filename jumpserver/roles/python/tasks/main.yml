@@ -1,8 +1,10 @@
 ---
-- name: check python3 env
-  stat:
-    path: /opt/py
-  register: py
+- name: install python3
+  block:
+    - name: check python3 env
+      stat:
+        path: /opt/py
+      register: py
 
-- include_tasks: install_python.yml
-  when: py.stat.exists == False
+    - import_tasks: install_python.yml
+      when: py.stat.exists == False

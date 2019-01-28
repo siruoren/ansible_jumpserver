@@ -6,10 +6,15 @@
     chdir: /tmp/
 
 - name: get python
-  get_url:
-    url: "{{python_url}}"
-    dest: /tmp/Python.tar.xz
-    mode: 0755
+  shell:
+    wget -O Python.tar.xz "{{python_url}}"
+  args:
+    chdir: /tmp/
+  register: py_dl
+  until: py_dl.rc == 0 #判断条件包含特定字符串cat
+  retries: 5  #重试5次
+  delay: 5    #间隔5s
+
 
 - name: unzrchive python tar
   unarchive:

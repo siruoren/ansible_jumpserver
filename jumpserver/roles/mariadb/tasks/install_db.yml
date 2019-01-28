@@ -1,0 +1,39 @@
+---
+- name: install mariadb service
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - mariadb-server
+    - mariadb-devel
+
+- name: start mariadb service
+  systemd:
+    name: mariadb
+    enabled: yes
+    state: restarted
+
+
+- name: copy initial mysql scripts
+  template:
+    src: initial_mysql_service.j2
+    dest: /tmp/initial_mysql_service.sql
+
+- name: initial mysql service
+  shell: |
+    mysql -uroot  < /tmp/initial_mysql_service.sql
+  ignore_errors: yes
+
+
+- name: delete initial mysql scripts
+  file:
+    path: /tmp/initial_mysql_service.sql
+    state: absent
+
+
+- name: restart mariadb service
+  systemd:
+    name: mariadb
+    enabled: yes
+    state: restarted
+

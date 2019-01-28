@@ -2,13 +2,11 @@
 - name: add group {{manager_group}}
   group:
     name: "{{manager_group}}"
-    gid: 9999
     state: present
 
 - name: add user {{manager_user}}
   user:
     name: "{{manager_user}}"
-    uid: 9999
     group: "{{manager_group}}"
     state: present
 
@@ -18,6 +16,7 @@
     owner: "{{manager_user}}"
     group: "{{manager_group}}"
     state: directory
+    recurse: yes
     mode: 0755
 
 - name: stop selinux status
@@ -28,11 +27,6 @@
 - name: disable selinux
   selinux:
     state: disabled
-
-- name: update selinux config
-  copy:
-    src: disabled_selinux_config
-    dest: /etc/selinux/config
 
 - name: disable firewalld
   systemd:
