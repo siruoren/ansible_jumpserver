@@ -8,37 +8,28 @@ luna_url: 'https://codeload.github.com/jumpserver/luna/zip/master'
 guacamole_repo: 'https://codeload.github.com/jumpserver/docker-guacamole/zip/master'
 guacamole_tomcat_url: 'http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.tar.gz'
 guacamole_ssh_forward_repo: 'https://github.com/ibuler/ssh-forward.git'
-
-
-AC:
-  bootstrap_token: '1234567890'
-
-
 mariadb:
+  HOST: 127.0.0.1
   USER: root
   PASSWORD: 'password'
 
 jms:
-  APP_DIR: /opt/jms
+  APP_DIR: /opt
+  HOST: 127.0.0.1
   HTTP_LISTEN_PORT: 8080
   DB_ENGINE: 'mysql'
-  DB_HOST: "{{groups['mariadb'][0]}}"
+  DB_HOST: '127.0.0.1'
   DB_PORT: 3306
   DB_USER: 'jumpserver'
   DB_PASSWORD: 'password'
   DB_NAME: 'jumpserver'
 
 coco:
-  CORE_HOST: "http://{{groups['jumpserver'][0]}}:{{jms.HTTP_LISTEN_PORT}}" 
   SSHD_PORT: 2222
 
 guacamole:
-  JMS: "http://{{groups['jumpserver'][0]}}:{{jms.HTTP_LISTEN_PORT}}" 
+  HOST: 127.0.0.1
   HTTP_LISTEN_PORT: 8081
-  rq_ro: 'http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro'
-  rq_nux: 'http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm'
-  rq_fee: 'https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-7.noarch.rpm'
-
 
 nginx:
   NGINX_PORT: 80

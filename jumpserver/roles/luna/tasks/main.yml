@@ -1,3 +1,56 @@
 ---
-- import_tasks: install_luna.yml
-  when: inventory_hostname in groups['jumpserver']
+- name: rm luna directory
+  file:
+    path: "{{item}}"
+    state: absent
+  with_items:
+     - "{{jms.APP_DIR}}/luna"
+     - "{{jms.APP_DIR}}/luna.tar.gz"
+     - /tmp/luna-master.zip
+     - /tmp/luna-master
+
+
+- name: download  luna src package
+  get_url:
+    url:  "{{luna_url}}"
+    dest: "/tmp/"
+    mode: 0755
+
+- name: unarchive luna src package
+  unarchive:
+    src: "/tmp/luna-master.zip"
+    dest: "/tmp/"
+    remote_src: yes
+    mode: 0755
+
+
+- name: get luna latest version
+  shell: |
+    cat package.json |grep version|awk -F'"' '{print $4}'
+  args:
+    chdir: /tmp/luna-master/
+  register: luna_version
+
+- name: download  luna  package
+  get_url:
+    url: "https://github.com/jumpserver/luna/releases/download/{{luna_version.stdout}}/luna.tar.gz"
+    dest: "{{jms.APP_DIR}}/"
+    mode: 0755
+
+
+- name: unarchive luna package
+  unarchive:
+    src: "{{jms.APP_DIR}}/luna.tar.gz"
+    dest: "{{jms.APP_DIR}}/"
+    mode: 0755
+
+
+
+- name: chmod  luna directory
+  file:
+    path: "{{jms.APP_DIR}}/luna"
+    state: directory
+    owner: "{{manager_user}}"
+    group: "{{manager_group}}"
+    recurse: yes
+    mode: 0755

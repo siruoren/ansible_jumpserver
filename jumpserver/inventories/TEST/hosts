@@ -1,11 +1,2 @@
 [jumpserver]
 127.0.0.1  ansible_ssh_user=root  ansible_ssh_pass=password
-
-[coco]
-127.0.0.1  ansible_ssh_user=root  ansible_ssh_pass=password
-
-[guacamole]
-127.0.0.1  ansible_ssh_user=root  ansible_ssh_pass=password
-
-[mariadb]
-127.0.0.1  ansible_ssh_user=root  ansible_ssh_pass=password
